@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌴 海南环岛自驾攻略 - 12天沉浸式环岛之旅</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        ocean: { 50: '#f0f9ff', 100: '#e0f2fe', 200: '#bae6fd', 300: '#7dd3fc', 400: '#38bdf8', 500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1', 800: '#075985', 900: '#0c4a6e' },
+                        sand: { 50: '#fefce8', 100: '#fef9c3', 200: '#fef08a', 300: '#fde047', 400: '#facc15', 500: '#eab308' },
+                        coral: { 400: '#fb7185', 500: '#f43f5e', 600: '#e11d48' },
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+/* ===== 全局基础样式 ===== */
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 0;
+}
+body {
+    overflow-x: hidden;
+    background: #030712;
+}
+
+/* 自定义滚动条 */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #111827; }
+::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #4b5563; }
+
+/* ===== 电影开场 Hero ===== */
+.hero-bg-layer img {
+    animation: heroSlow 30s ease-in-out infinite alternate;
+}
+@keyframes heroSlow {
+    0% { transform: scale(1) translate(0, 0); }
+    100% { transform: scale(1.1) translate(-1%, -1%); }
+}
+.cinema-bar {
+    z-index: 20;
+}
+.hero-title {
+    animation: titleReveal 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+    transform: translateY(40px);
+}
+@keyframes titleReveal {
+    to { opacity: 1; transform: translateY(0); }
+}
+.hero-content {
+    animation: contentFade 2s ease 0.5s forwards;
+    opacity: 0;
+}
+@keyframes contentFade {
+    to { opacity: 1; }
+}
+.scroll-line {
+    animation: scrollPulse 2s ease-in-out infinite;
+}
+@keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; height: 40px; }
+    50% { opacity: 0.8; height: 60px; }
+}
+
+/* ===== 动态路线图 ===== */
+.route-map-section {
+    background: radial-gradient(ellipse at center, rgba(14,165,233,0.05) 0%, transparent 70%);
+}
+.route-map-layout {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 2rem;
+    align-items: center;
+}
+.route-svg-wrap {
+    position: relative;
+    max-width: 500px;
+    margin: 0 auto;
+}
+.route-svg {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+.route-svg-node {
+    cursor: pointer;
+}
+.route-svg-node circle,
+.route-svg-node text {
+    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.route-svg-node:hover .node-bg {
+    opacity: 0.6 !important;
+    r: 15;
+}
+.route-svg-node:hover .node-core {
+    opacity: 0.8 !important;
+}
+.route-svg-node:hover .node-label {
+    opacity: 0.9 !important;
+}
+.route-anim-path {
+    transition: stroke-dashoffset 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.route-info-panel {
+    position: sticky;
+    top: 100px;
+}
+.route-info-inner {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 1.5rem;
+    padding: 2rem;
+    backdrop-filter: blur(10px);
+    transition: all 0.5s ease;
+}
+.route-info-inner:hover {
+    border-color: rgba(14,165,233,0.2);
+    background: rgba(255,255,255,0.05);
+}
+@media (max-width: 900px) {
+    .route-map-layout {
+        grid-template-columns: 1fr;
+    }
+    .route-svg-wrap {
+        max-width: 400px;
+    }
+    .route-info-panel {
+        position: static;
+    }
+    .route-info-inner {
+        max-width: 400px;
+        margin: 0 auto;
+    }
+}
+
+/* ===== 电影分镜 ===== */
+.cinema-frame {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+.cinema-frame-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+}
+.cinema-frame-bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 8s ease;
+}
+.cinema-frame.in-view .cinema-frame-bg img {
+    transform: scale(1.05);
+}
+.cinema-frame-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+}
+.cinema-frame-content {
+    position: relative;
+    z-index: 2;
+    max-width: 600px;
+    padding: 2rem;
+}
+.cinema-frame-content.align-left {
+    margin-left: 8%;
+}
+.cinema-frame-content.align-right {
+    margin-left: auto;
+    margin-right: 8%;
+}
+.cinema-frame-content.align-center {
+    margin: 0 auto;
+    text-align: center;
+}
+.frame-subtitle {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s;
+}
+.frame-title {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 1s cubic-bezier(0.16, 1, 0.3, 1) 0.4s;
+}
+.frame-desc {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 1s cubic-bezier(0.16, 1, 0.3, 1) 0.6s;
+}
+.frame-meta {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 1s cubic-bezier(0.16, 1, 0.3, 1) 0.8s;
+}
+.cinema-frame.in-view .frame-subtitle,
+.cinema-frame.in-view .frame-title,
+.cinema-frame.in-view .frame-desc,
+.cinema-frame.in-view .frame-meta {
+    opacity: 1;
+    transform: translateY(0);
+}
+.frame-number {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    font-size: 6rem;
+    font-weight: 900;
+    color: rgba(255,255,255,0.04);
+    line-height: 1;
+    z-index: 2;
+    pointer-events: none;
+}
+.frame-divider {
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, currentColor, transparent);
+    margin: 1rem 0;
+}
+
+/* ===== 时间轴叙事 ===== */
+.timeline-slider-wrap {
+    position: relative;
+    padding: 0 1rem;
+}
+.timeline-slider-track {
+    position: relative;
+    height: 6px;
+    background: #1e293b;
+    border-radius: 3px;
+    cursor: pointer;
+}
+.timeline-slider-progress {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: linear-gradient(90deg, #0ea5e9, #38bdf8, #7dd3fc);
+    border-radius: 3px;
+    width: 0%;
+    transition: width 0.3s ease;
+    box-shadow: 0 0 10px rgba(14,165,233,0.4);
+}
+.timeline-slider-thumb {
+    position: absolute;
+    top: 50%;
+    left: 0%;
+    transform: translate(-50%, -50%);
+    width: 24px;
+    height: 24px;
+    background: white;
+    border-radius: 50%;
+    cursor: grab;
+    box-shadow: 0 0 0 4px rgba(14,165,233,0.3), 0 4px 15px rgba(0,0,0,0.3);
+    transition: left 0.3s ease, box-shadow 0.2s ease;
+    z-index: 5;
+}
+.timeline-slider-thumb:active {
+    cursor: grabbing;
+    box-shadow: 0 0 0 8px rgba(14,165,233,0.4), 0 4px 20px rgba(0,0,0,0.4);
+}
+.timeline-slider-thumb::after {
+    content: '';
+    position: absolute;
+    inset: 5px;
+    background: #0ea5e9;
+    border-radius: 50%;
+}
+.timeline-ticks {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    pointer-events: none;
+}
+.timeline-tick {
+    width: 4px;
+    height: 4px;
+    background: #475569;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+.timeline-tick.passed {
+    background: #0ea5e9;
+    box-shadow: 0 0 6px rgba(14,165,233,0.5);
+}
+.timeline-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.75rem;
+    padding: 0 0.25rem;
+}
+.timeline-label {
+    font-size: 0.65rem;
+    color: #475569;
+    transition: color 0.3s ease;
+    cursor: pointer;
+    text-align: center;
+    min-width: 40px;
+}
+.timeline-label.active {
+    color: #0ea5e9;
+    font-weight: 700;
+}
+.timeline-content-area {
+    min-height: 400px;
+}
+.timeline-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 1.5rem;
+    overflow: hidden;
+    animation: cardReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes cardReveal {
+    from { opacity: 0; transform: translateY(20px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.timeline-card-img {
+    height: 280px;
+    overflow: hidden;
+    position: relative;
+}
+.timeline-card-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.timeline-card-img::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: linear-gradient(to top, rgba(3,7,18,0.9), transparent);
+}
+
+/* ===== 天气卡片 ===== */
+.weather-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 1rem;
+    padding: 1.25rem 0.75rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: default;
+}
+.weather-card:hover {
+    background: rgba(255,255,255,0.06);
+    border-color: rgba(14,165,233,0.3);
+    transform: translateY(-4px);
+}
+.weather-card .weather-icon {
+    font-size: 2rem;
+    margin-bottom: 0.4rem;
+    display: block;
+}
+.weather-card .temp-high {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #fb923c;
+}
+.weather-card .temp-low {
+    font-size: 0.8rem;
+    color: #38bdf8;
+}
+
+/* ===== 景点卡片 ===== */
+.spot-card {
+    border-radius: 1rem;
+    overflow: hidden;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    transition: all 0.4s ease;
+    cursor: pointer;
+}
+.spot-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(14,165,233,0.3);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+}
+.spot-card .spot-img {
+    height: 200px;
+    overflow: hidden;
+}
+.spot-card .spot-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+}
+.spot-card:hover .spot-img img {
+    transform: scale(1.1);
+}
+.spot-card .spot-info {
+    padding: 1.25rem;
+}
+.spot-card .spot-tag {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 9999px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-right: 0.3rem;
+    margin-bottom: 0.3rem;
+}
+
+/* ===== 贴士卡片 ===== */
+.tip-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+}
+.tip-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(14,165,233,0.2);
+    background: rgba(255,255,255,0.05);
+}
+.tip-card .tip-icon {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    background: rgba(255,255,255,0.05);
+}
+
+/* ===== 行李清单 ===== */
+.checklist-card {
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 1rem;
+    padding: 1.25rem;
+    transition: all 0.3s ease;
+}
+.checklist-card:hover {
+    background: rgba(255,255,255,0.12);
+    transform: translateY(-3px);
+}
+.checklist-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0;
+    color: rgba(255,255,255,0.85);
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.checklist-item input[type="checkbox"] {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255,255,255,0.4);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    position: relative;
+}
+.checklist-item input[type="checkbox"]:checked {
+    background: #fde047;
+    border-color: #fde047;
+}
+.checklist-item input[type="checkbox"]:checked::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 12px;
+    font-weight: bold;
+    color: #0c4a6e;
+}
+.checklist-item.checked span {
+    text-decoration: line-through;
+    opacity: 0.5;
+}
+
+/* ===== 景点弹窗 ===== */
+.spot-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(8px);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.spot-modal-overlay.show { opacity: 1; }
+.spot-modal {
+    background: #111827;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 1.5rem;
+    max-width: 600px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+    transform: scale(0.9) translateY(20px);
+    transition: transform 0.3s ease;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+}
+.spot-modal-overlay.show .spot-modal {
+    transform: scale(1) translateY(0);
+}
+
+/* ===== 回到顶部 ===== */
+#backToTop.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* ===== 淡入动画 ===== */
+.fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.6s ease;
+}
+.fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ===== 响应式 ===== */
+@media (max-width: 768px) {
+    .cinema-frame-content.align-left,
+    .cinema-frame-content.align-right {
+        margin: 0 auto;
+        text-align: center;
+        padding: 1.5rem;
+    }
+    .frame-number {
+        font-size: 4rem;
+        top: 1rem;
+        right: 1rem;
+    }
+    .cinema-frame {
+        min-height: 80vh;
+    }
+    .route-node .node-ring {
+        width: 44px;
+        height: 44px;
+        font-size: 1.2rem;
+    }
+}
+@media (max-width: 480px) {
+    .timeline-label {
+        font-size: 0.55rem;
+        min-width: 28px;
+    }
+}
+    </style>
+</head>
+<body class="bg-gray-950 text-gray-100 font-sans overflow-x-hidden">
+
+    <!-- ===== 电影开场 Hero ===== -->
+    <section id="hero" class="relative h-screen flex items-center justify-center overflow-hidden">
+        <div class="hero-bg-layer absolute inset-0">
+            <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&q=80" alt="海南海滩" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-gray-950"></div>
+        </div>
+        <div class="absolute top-0 left-0 right-0 h-16 bg-black z-20 cinema-bar"></div>
+        <div class="absolute bottom-0 left-0 right-0 h-16 bg-black z-20 cinema-bar"></div>
+        <div class="relative z-10 text-center px-4 max-w-4xl mx-auto hero-content">
+            <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md rounded-full px-5 py-2 mb-6 text-white/80 text-sm border border-white/10">
+                <i class="fas fa-film"></i>
+                <span>2026.04.25 — 05.06 · 12天11晚</span>
+            </div>
+            <h1 class="text-5xl sm:text-6xl md:text-8xl font-black text-white mb-6 leading-tight tracking-tight hero-title">
+                海南<span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-orange-400 to-rose-400">环岛</span>
+            </h1>
+            <p class="text-xl sm:text-2xl text-white/60 mb-3 font-light tracking-widest">
+                A CINEMATIC ROAD TRIP
+            </p>
+            <p class="text-base text-white/40 mb-12 max-w-lg mx-auto leading-relaxed">
+                1500公里海岸线 · 10座城市 · 12天深度自驾<br>用电影的方式，讲述一段环岛故事
+            </p>
+            <a href="#cinema-route" class="inline-flex items-center gap-3 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white px-10 py-4 rounded-full font-medium transition-all duration-500 border border-white/20 hover:border-white/40 group">
+                <span>开始旅程</span>
+                <i class="fas fa-play text-sm group-hover:translate-x-1 transition-transform"></i>
+            </a>
+        </div>
+        <div class="absolute bottom-24 left-1/2 -translate-x-1/2 z-10 scroll-hint">
+            <div class="flex flex-col items-center gap-2 text-white/30">
+                <span class="text-xs tracking-widest uppercase">Scroll</span>
+                <div class="w-px h-10 bg-gradient-to-b from-white/40 to-transparent scroll-line"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== 动态路线图 ===== -->
+    <section id="cinema-route" class="relative py-0">
+        <div class="route-map-section">
+            <div class="max-w-7xl mx-auto px-4 py-20">
+                <div class="text-center mb-16">
+                    <p class="text-xs tracking-[0.3em] uppercase text-ocean-400 mb-3">Route Map</p>
+                    <h2 class="text-4xl sm:text-5xl font-black text-white mb-4">环岛路线</h2>
+                    <p class="text-white/40 max-w-md mx-auto">三亚出发，东线北上，西线南下，完整环岛一圈</p>
+                </div>
+                <div id="routeMapContainer" class="relative"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== 电影分镜 ===== -->
+    <section id="cinema-frames" class="relative">
+        <div id="cinemaFramesContainer"></div>
+    </section>
+
+    <!-- ===== 时间轴叙事 ===== -->
+    <section id="timeline-narrative" class="relative py-20 bg-gray-950">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center mb-16">
+                <p class="text-xs tracking-[0.3em] uppercase text-ocean-400 mb-3">Timeline</p>
+                <h2 class="text-4xl sm:text-5xl font-black text-white mb-4">旅程时间轴</h2>
+                <p class="text-white/40 max-w-md mx-auto">拖动时间轴，快进你的12天环岛之旅</p>
+            </div>
+            <div class="timeline-slider-wrap mb-12">
+                <div class="timeline-slider-track" id="timelineTrack">
+                    <div class="timeline-slider-progress" id="timelineProgress"></div>
+                    <div class="timeline-slider-thumb" id="timelineThumb"></div>
+                    <div class="timeline-ticks" id="timelineTicks"></div>
+                </div>
+                <div class="timeline-labels" id="timelineLabels"></div>
+            </div>
+            <div id="timelineContent" class="timeline-content-area"></div>
+        </div>
+    </section>
+
+    <!-- ===== 天气预报 ===== -->
+    <section id="weather" class="py-20 px-4 bg-gray-900/50">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-12">
+                <p class="text-xs tracking-[0.3em] uppercase text-ocean-400 mb-3">Weather</p>
+                <h2 class="text-3xl sm:text-4xl font-black text-white mb-3">12天天气预报</h2>
+                <p class="text-white/40 max-w-xl mx-auto">4月25日-5月6日海南天气以多云晴好为主，适合自驾出游</p>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-3" id="weatherCards"></div>
+            <div class="mt-8 bg-amber-500/10 border border-amber-500/20 rounded-2xl p-6">
+                <div class="flex items-start gap-3">
+                    <div class="text-2xl mt-0.5">⚠️</div>
+                    <div>
+                        <h4 class="font-bold text-amber-300 mb-1">自驾天气提醒</h4>
+                        <p class="text-amber-200/70 text-sm leading-relaxed">4月底至5月初海南进入雨季前期，东线和中部山区可能出现短时阵雨。自驾时注意：雨天山路减速慢行、开启雾灯；随身携带雨具；防晒霜（SPF50+）全程必备。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== 热门景点 ===== -->
+    <section id="spots" class="py-20 px-4 bg-gray-950">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-12">
+                <p class="text-xs tracking-[0.3em] uppercase text-ocean-400 mb-3">Attractions</p>
+                <h2 class="text-3xl sm:text-4xl font-black text-white mb-3">环岛必游景点</h2>
+                <p class="text-white/40 max-w-xl mx-auto">精选环岛沿途最具代表性的旅游景点</p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="spotsGrid"></div>
+        </div>
+    </section>
+
+    <!-- ===== 出行贴士 ===== -->
+    <section id="tips" class="py-20 px-4 bg-gray-900/50">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-12">
+                <p class="text-xs tracking-[0.3em] uppercase text-ocean-400 mb-3">Tips</p>
+                <h2 class="text-3xl sm:text-4xl font-black text-white mb-3">环岛自驾贴士</h2>
+                <p class="text-white/40 max-w-xl mx-auto">贴心整理的海南环岛自驾实用建议</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="tipsGrid"></div>
+        </div>
+    </section>
+
+    <!-- ===== 行李清单 ===== -->
+    <section class="py-20 px-4 bg-gradient-to-br from-ocean-600 to-ocean-900">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-12">
+                <p class="text-xs tracking-[0.3em] uppercase text-white/50 mb-3">Checklist</p>
+                <h2 class="text-3xl sm:text-4xl font-black text-white mb-3">行李清单</h2>
+                <p class="text-white/50 max-w-xl mx-auto">12天环岛自驾必备物品，勾选确认不遗漏</p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="checklistGrid"></div>
+        </div>
+    </section>
+
+    <!-- ===== 页脚 ===== -->
+    <footer class="bg-black text-gray-500 py-16 px-4">
+        <div class="max-w-6xl mx-auto text-center">
+            <div class="flex justify-center items-center gap-3 mb-4">
+                <span class="text-3xl">🌴</span>
+                <span class="text-xl font-black text-white tracking-tight">海南环岛自驾</span>
+            </div>
+            <p class="text-sm mb-2 text-gray-400">祝你环岛旅途愉快，收获满满的美好回忆</p>
+            <p class="text-xs text-gray-600 mb-6">行程仅供参考，请根据实际路况和天气灵活调整</p>
+            <p>由 <a href="https://with.woa.com/" style="color: #8A2BE2;" target="_blank">With</a> 通过自然语言生成</p>
+        </div>
+    </footer>
+
+    <!-- 回到顶部 -->
+    <button id="backToTop" class="fixed bottom-6 right-6 z-50 bg-white/10 backdrop-blur-md text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300 hover:bg-white/20 hover:-translate-y-1 border border-white/10">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script>
+// ===== 数据定义 =====
+
+const weatherData = [
+    { date: '4月25日', weekday: '周六', icon: '☀️', desc: '晴间多云', high: 32, low: 25, humidity: '72%', wind: '东南风2级' },
+    { date: '4月26日', weekday: '周日', icon: '⛅', desc: '多云', high: 31, low: 25, humidity: '76%', wind: '东风3级' },
+    { date: '4月27日', weekday: '周一', icon: '⛅', desc: '多云', high: 30, low: 24, humidity: '78%', wind: '东北风2级' },
+    { date: '4月28日', weekday: '周二', icon: '🌦️', desc: '多云转小雨', high: 29, low: 24, humidity: '85%', wind: '东风3级' },
+    { date: '4月29日', weekday: '周三', icon: '🌦️', desc: '阵雨转多云', high: 28, low: 23, humidity: '88%', wind: '北风3级' },
+    { date: '4月30日', weekday: '周四', icon: '⛅', desc: '多云', high: 30, low: 24, humidity: '80%', wind: '东南风2级' },
+    { date: '5月1日', weekday: '周五', icon: '🌦️', desc: '多云转小雨', high: 30, low: 25, humidity: '92%', wind: '东北风3级' },
+    { date: '5月2日', weekday: '周六', icon: '🌦️', desc: '多云转小雨', high: 29, low: 24, humidity: '90%', wind: '北风3级' },
+    { date: '5月3日', weekday: '周日', icon: '⛅', desc: '多云', high: 30, low: 24, humidity: '85%', wind: '东南风2级' },
+    { date: '5月4日', weekday: '周一', icon: '☀️', desc: '晴间多云', high: 31, low: 25, humidity: '78%', wind: '东南风2级' },
+    { date: '5月5日', weekday: '周二', icon: '☀️', desc: '晴', high: 32, low: 25, humidity: '75%', wind: '南风2级' },
+    { date: '5月6日', weekday: '周三', icon: '⛅', desc: '多云', high: 31, low: 25, humidity: '77%', wind: '东南风3级' },
+];
+
+const routeStops = [
+    { name: '三亚', icon: '🏖️', day: 'D1', desc: '出发地 · 椰梦长廊', color: '#f43f5e' },
+    { name: '陵水', icon: '🏝️', day: 'D2', desc: '分界洲岛 · 清水湾', color: '#f97316' },
+    { name: '万宁', icon: '🏄', day: 'D3', desc: '日月湾冲浪 · 石梅湾', color: '#eab308' },
+    { name: '琼海', icon: '🌊', day: 'D4', desc: '博鳌论坛 · 万泉河', color: '#22c55e' },
+    { name: '文昌', icon: '🚀', day: 'D5', desc: '航天城 · 东郊椰林', color: '#06b6d4' },
+    { name: '海口', icon: '🏙️', day: 'D6-7', desc: '骑楼老街 · 火山口', color: '#3b82f6' },
+    { name: '儋州', icon: '📚', day: 'D8', desc: '东坡书院 · 海花岛', color: '#8b5cf6' },
+    { name: '昌江', icon: '🏜️', day: 'D9', desc: '棋子湾 · 霸王岭', color: '#a855f7' },
+    { name: '乐东', icon: '🌲', day: 'D10', desc: '尖峰岭 · 莺歌海', color: '#ec4899' },
+    { name: '三亚', icon: '🌅', day: 'D11-12', desc: '经典回归 · 圆满收官', color: '#f43f5e' },
+];
+
+const cinemaFrames = [
+    {
+        id: 'dawn', title: '晨光初照', subtitle: 'SCENE 01 · 破晓',
+        desc: '清晨六点，三亚湾的第一缕阳光穿透薄雾，椰林在晨风中轻轻摇曳。你启动引擎，环岛之旅从这一刻开始。',
+        meta: 'Day 1 · 三亚 → 陵水 · 120km',
+        img: 'https://zhiyan-ai-agent-with-1258344702.cos.ap-guangzhou.tencentcos.cn/with/30595055-de27-4df9-a4be-ce3109999bd0/image_1776667697_2_1.jpg',
+        overlay: 'bg-gradient-to-r from-black/70 via-black/40 to-transparent', align: 'align-left', accent: '#fbbf24', mood: '温暖 · 期待'
+    },
+    {
+        id: 'surf', title: '浪尖起舞', subtitle: 'SCENE 02 · 冲浪',
+        desc: '万宁日月湾，中国冲浪之都。海浪一波接一波涌来，你踩上冲浪板，在蓝色的浪花中找到自由的感觉。',
+        meta: 'Day 3 · 万宁日月湾 · 冲浪体验',
+        img: 'https://zhiyan-ai-agent-with-1258344702.cos.ap-guangzhou.tencentcos.cn/with/ca91b6cf-502f-4ca3-9f4d-2595885e4328/image_1776667731_2_1.jpg',
+        overlay: 'bg-gradient-to-l from-black/70 via-black/40 to-transparent', align: 'align-right', accent: '#38bdf8', mood: '自由 · 激情'
+    },
+    {
+        id: 'coconut', title: '椰林深处', subtitle: 'SCENE 03 · 穿行',
+        desc: '文昌东郊椰林，绵延数十公里的椰子树在公路两旁列队欢迎。阳光透过椰叶洒下斑驳光影，这是海南最经典的画面。',
+        meta: 'Day 5 · 文昌 · 东郊椰林',
+        img: 'https://zhiyan-ai-agent-with-1258344702.cos.ap-guangzhou.tencentcos.cn/with/b26bcf1d-dd72-4a65-bcb9-9ec0eb44039a/image_1776667718_1_1.jpg',
+        overlay: 'bg-gradient-to-r from-black/70 via-black/40 to-transparent', align: 'align-left', accent: '#4ade80', mood: '宁静 · 惬意'
+    },
+    {
+        id: 'market', title: '烟火人间', subtitle: 'SCENE 04 · 夜市',
+        desc: '海口的夜晚属于美食。骑楼老街的灯火通明，老爸茶的香气弥漫街巷，清补凉、文昌鸡、海南粉……每一口都是海南的味道。',
+        meta: 'Day 6 · 海口 · 骑楼老街夜市',
+        img: 'https://zhiyan-ai-agent-with-1258344702.cos.ap-guangzhou.tencentcos.cn/with/d2543941-da74-4376-a968-ca17db3ac5ed/image_1776667704_2_3.jpg',
+        overlay: 'bg-gradient-to-l from-black/80 via-black/50 to-black/30', align: 'align-right', accent: '#fb923c', mood: '热闹 · 烟火'
+    },
+    {
+        id: 'rainforest', title: '雨林秘境', subtitle: 'SCENE 05 · 探索',
+        desc: '尖峰岭的热带雨林，云雾缭绕如入仙境。古木参天，藤蔓缠绕，负氧离子含量全国之最。你深吸一口气，感受大自然最纯粹的馈赠。',
+        meta: 'Day 10 · 乐东 · 尖峰岭国家森林公园',
+        img: 'https://zhiyan-ai-agent-with-1258344702.cos.ap-guangzhou.tencentcos.cn/with/386814cc-2512-46ae-bce0-57b5ebc2271b/image_1776667725_2_1.jpg',
+        overlay: 'bg-gradient-to-r from-black/70 via-black/40 to-transparent', align: 'align-left', accent: '#34d399', mood: '神秘 · 敬畏'
+    },
+    {
+        id: 'sunset', title: '落日归途', subtitle: 'SCENE 06 · 尾声',
+        desc: '最后一个傍晚，你停在棋子湾的礁石上。金色的夕阳缓缓沉入南海，1500公里的环岛之旅在这一刻画上最美的句号。',
+        meta: 'Day 11 · 三亚 · 天涯海角日落',
+        img: 'https://zhiyan-ai-agent-with-1258344702.cos.ap-guangzhou.tencentcos.cn/with/dcdd715c-82ad-41a9-b636-26cf4e6c034d/image_1776667712_1_3.jpg',
+        overlay: 'bg-gradient-to-l from-black/70 via-black/40 to-transparent', align: 'align-center', accent: '#f97316', mood: '感动 · 不舍'
+    },
+];
+
+const itineraryData = [
+    { day: 1, date: '4月25日（周六）', theme: '抵达三亚 · 开启环岛之旅', weather: '☀️ 晴间多云 25~32℃', route: '三亚凤凰机场 → 三亚湾 → 大东海', mileage: '约30km', img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80', highlights: ['取车自驾', '椰梦长廊', '第一市场海鲜'], items: [
+        { time: '上午', icon: '✈️', title: '抵达三亚', desc: '乘坐上午航班抵达，机场附近取车，推荐SUV车型。' },
+        { time: '下午', icon: '🏖️', title: '三亚湾椰梦长廊', desc: '沿海滨大道散步，感受椰风海韵，熟悉自驾路线。' },
+        { time: '傍晚', icon: '🌅', title: '三亚湾日落', desc: '金色余晖洒满海面，拍照绝美。' },
+        { time: '晚上', icon: '🦞', title: '第一市场海鲜', desc: '自选海鲜加工，和乐蟹、基围虾，人均100-150元。' },
+    ]},
+    { day: 2, date: '4月26日（周日）', theme: '三亚 → 陵水 · 海岛探秘', weather: '⛅ 多云 25~31℃', route: '三亚 → 分界洲岛 → 清水湾 → 陵水', mileage: '约120km', img: 'https://images.unsplash.com/photo-1559628233-100c798642d4?w=800&q=80', highlights: ['分界洲岛', '会唱歌的沙滩', '陵水酸粉'], items: [
+        { time: '上午', icon: '🏝️', title: '分界洲岛', desc: '5A级景区，海水清澈见底，可体验潜水、海豚表演。' },
+        { time: '下午', icon: '🏖️', title: '清水湾', desc: '脚踩细沙会发出银铃般声响，国内罕见的"会唱歌的沙滩"。' },
+        { time: '晚上', icon: '🍲', title: '陵水酸粉', desc: '海南四大名粉之一，酸辣鲜香。' },
+    ]},
+    { day: 3, date: '4月27日（周一）', theme: '陵水 → 万宁 · 冲浪天堂', weather: '⛅ 多云 24~30℃', route: '陵水 → 南湾猴岛 → 日月湾 → 石梅湾', mileage: '约100km', img: 'https://zhiyan-ai-agent-with-1258344702.cos.ap-guangzhou.tencentcos.cn/with/e88eb334-22ac-495c-ae15-9f912e0d7c95/image_1776667382_1_1.jpg', highlights: ['南湾猴岛', '日月湾冲浪', '东山羊'], items: [
+        { time: '上午', icon: '🐒', title: '南湾猴岛', desc: '跨海缆车前往，2500多只猕猴，风景壮观。' },
+        { time: '下午', icon: '🏄', title: '日月湾冲浪', desc: '中国冲浪之都，初学者可报名课程约200-300元/人。' },
+        { time: '傍晚', icon: '🌴', title: '石梅湾', desc: '被誉为"海南最美海湾"，青皮林保护区绵延海岸。' },
+    ]},
+    { day: 4, date: '4月28日（周二）', theme: '万宁 → 琼海 · 博鳌风情', weather: '🌦️ 多云转小雨 24~29℃', route: '万宁 → 兴隆 → 博鳌 → 琼海', mileage: '约110km', img: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80', highlights: ['兴隆咖啡', '博鳌论坛', '玉带滩'], items: [
+        { time: '上午', icon: '🌿', title: '兴隆热带植物园', desc: '品尝正宗兴隆咖啡，参观千种热带植物。' },
+        { time: '下午', icon: '🏛️', title: '博鳌亚洲论坛', desc: '参观永久会址，游览玉带滩奇观。' },
+        { time: '晚上', icon: '🍲', title: '琼海杂粮小吃', desc: '鸡屎藤粑仔、薏粑、清补凉等特色小吃。' },
+    ]},
+    { day: 5, date: '4月29日（周三）', theme: '琼海 → 文昌 · 航天椰乡', weather: '🌦️ 阵雨转多云 23~28℃', route: '琼海 → 文昌航天城 → 东郊椰林 → 铜鼓岭', mileage: '约130km', img: 'https://zhiyan-ai-agent-with-1258344702.cos.ap-guangzhou.tencentcos.cn/with/b26bcf1d-dd72-4a65-bcb9-9ec0eb44039a/image_1776667718_1_1.jpg', highlights: ['航天发射场', '文昌鸡', '东郊椰林'], items: [
+        { time: '上午', icon: '🚀', title: '文昌航天发射场', desc: '中国最年轻的航天发射场，科普馆内容丰富。' },
+        { time: '中午', icon: '🐔', title: '文昌鸡', desc: '海南四大名菜之首，皮脆肉嫩。' },
+        { time: '下午', icon: '🌴', title: '东郊椰林', desc: '海南最大椰子种植区，绵延数十公里椰林海岸线。' },
+    ]},
+    { day: 6, date: '4月30日（周四）', theme: '文昌 → 海口 · 省会风情', weather: '⛅ 多云 24~30℃', route: '文昌 → 海口骑楼老街 → 火山口公园', mileage: '约100km', img: 'https://images.unsplash.com/photo-1470004914212-05527e49370b?w=800&q=80', highlights: ['骑楼老街', '老爸茶', '火山口'], items: [
+        { time: '上午', icon: '🏘️', title: '骑楼老街', desc: '700多栋南洋风格骑楼，中国历史文化名街。' },
+        { time: '下午', icon: '🌋', title: '火山口地质公园', desc: '万年火山口，直径300米，植被茂密。' },
+        { time: '晚上', icon: '🌃', title: '海口湾夜景', desc: '世纪大桥、云洞图书馆，海口夜色迷人。' },
+    ]},
+    { day: 7, date: '5月1日（周五）', theme: '海口深度游 · 五一假期', weather: '🌦️ 多云转小雨 25~30℃', route: '海口市区一日游', mileage: '约40km', img: 'https://zhiyan-ai-agent-with-1258344702.cos.ap-guangzhou.tencentcos.cn/with/d2543941-da74-4376-a968-ca17db3ac5ed/image_1776667704_2_3.jpg', highlights: ['省博物馆', '电影公社', '免税购物'], items: [
+        { time: '上午', icon: '🏛️', title: '海南省博物馆', desc: '南海水下考古展和黎族文化展，免费参观。' },
+        { time: '下午', icon: '🛍️', title: '免税店购物', desc: '海口国际免税城，五一促销活动。' },
+        { time: '晚上', icon: '🌊', title: '假日海滩', desc: '海口市民最爱的休闲去处，沙滩烧烤。' },
+    ]},
+    { day: 8, date: '5月2日（周六）', theme: '海口 → 儋州 · 东坡文化', weather: '🌦️ 多云转小雨 24~29℃', route: '海口 → 千年古盐田 → 东坡书院 → 海花岛', mileage: '约180km', img: 'https://images.unsplash.com/photo-1448375240586-882707db888b?w=800&q=80', highlights: ['千年古盐田', '东坡书院', '海花岛'], items: [
+        { time: '上午', icon: '🧂', title: '千年古盐田', desc: '1200多年历史，上千个晒盐石槽散布海滩。' },
+        { time: '下午', icon: '📚', title: '东坡书院', desc: '苏东坡被贬海南时的讲学之地，古木参天。' },
+        { time: '傍晚', icon: '🏝️', title: '海花岛', desc: '全球最大花型人工岛，海洋乐园、博物馆群。' },
+    ]},
+    { day: 9, date: '5月3日（周日）', theme: '儋州 → 昌江 · 奇石海湾', weather: '⛅ 多云 24~30℃', route: '儋州 → 棋子湾 → 霸王岭 → 昌江', mileage: '约120km', img: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=800&q=80', highlights: ['棋子湾', '霸王岭', '西海岸日落'], items: [
+        { time: '上午', icon: '🏖️', title: '棋子湾', desc: '黑白鹅卵石如棋子散落，大角小角礁石奇观。' },
+        { time: '下午', icon: '🌳', title: '霸王岭', desc: '海南长臂猿栖息地，负氧离子含量极高。' },
+        { time: '傍晚', icon: '🌅', title: '棋子湾日落', desc: '海南观赏日落最佳地点之一。' },
+    ]},
+    { day: 10, date: '5月4日（周一）', theme: '昌江 → 乐东 · 雨林秘境', weather: '☀️ 晴间多云 25~31℃', route: '昌江 → 莺歌海盐场 → 尖峰岭 → 乐东', mileage: '约160km', img: 'https://zhiyan-ai-agent-with-1258344702.cos.ap-guangzhou.tencentcos.cn/with/386814cc-2512-46ae-bce0-57b5ebc2271b/image_1776667725_2_1.jpg', highlights: ['莺歌海盐场', '尖峰岭天池', '星空'], items: [
+        { time: '上午', icon: '🧂', title: '莺歌海盐场', desc: '中国三大盐场之一，盐田在阳光下闪耀如镜。' },
+        { time: '下午', icon: '🌲', title: '尖峰岭', desc: '中国最大热带原始雨林，天池海拔800米。' },
+        { time: '晚上', icon: '🌌', title: '尖峰岭星空', desc: '远离城市喧嚣，夜晚星空璀璨。' },
+    ]},
+    { day: 11, date: '5月5日（周二）', theme: '乐东 → 三亚 · 经典回归', weather: '☀️ 晴 25~32℃', route: '乐东 → 大小洞天 → 南山 → 天涯海角 → 三亚', mileage: '约130km', img: 'https://zhiyan-ai-agent-with-1258344702.cos.ap-guangzhou.tencentcos.cn/with/dcdd715c-82ad-41a9-b636-26cf4e6c034d/image_1776667712_1_3.jpg', highlights: ['南山观音', '天涯海角', '鹿回头夜景'], items: [
+        { time: '上午', icon: '🏔️', title: '大小洞天', desc: '800多年历史的道家文化旅游胜地。' },
+        { time: '下午', icon: '🙏', title: '南山文化旅游区', desc: '108米海上观音像，南山素斋。' },
+        { time: '傍晚', icon: '🪨', title: '天涯海角', desc: '已免门票，海景壮阔，浪漫至极。' },
+    ]},
+    { day: 12, date: '5月6日（周三）', theme: '三亚深度游 · 圆满收官', weather: '⛅ 多云 25~31℃', route: '蜈支洲岛/亚龙湾 → 免税购物 → 机场还车', mileage: '约80km', img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80', highlights: ['蜈支洲岛', '免税购物', '告别三亚'], items: [
+        { time: '上午', icon: '🏝️', title: '蜈支洲岛/亚龙湾', desc: '中国马尔代夫，浮潜、海上摩托等水上项目。' },
+        { time: '下午', icon: '🛍️', title: '免税购物 & 还车', desc: 'cdf三亚国际免税城，最后的购物时光。' },
+        { time: '傍晚', icon: '✈️', title: '返程', desc: '带上满满回忆，结束12天环岛之旅！' },
+    ]},
+];
+
+const spotsData = [
+    { name: '蜈支洲岛', img: 'https://images.unsplash.com/photo-1559628233-100c798642d4?w=600&q=80', rating: 4.8, level: '5A', tags: [{ text: '海岛', color: 'bg-blue-500/20 text-blue-300' }, { text: '潜水', color: 'bg-cyan-500/20 text-cyan-300' }], address: '三亚·海棠湾', price: '¥136', desc: '被誉为"中国马尔代夫"，海水能见度极高，是国内顶级潜水胜地。', tips: '建议早上8点前到达码头排队。' },
+    { name: '分界洲岛', img: 'https://images.unsplash.com/photo-1468413253725-0d5181091126?w=600&q=80', rating: 4.7, level: '5A', tags: [{ text: '海岛', color: 'bg-blue-500/20 text-blue-300' }, { text: '气候分界', color: 'bg-teal-500/20 text-teal-300' }], address: '陵水·牛岭', price: '¥132', desc: '海南南北气候分界线，中国首个海岛型5A景区。', tips: '常出现一边晴天一边下雨的奇观。' },
+    { name: '日月湾', img: 'https://zhiyan-ai-agent-with-1258344702.cos.ap-guangzhou.tencentcos.cn/with/e88eb334-22ac-495c-ae15-9f912e0d7c95/image_1776667382_1_1.jpg', rating: 4.6, level: '冲浪胜地', tags: [{ text: '冲浪', color: 'bg-orange-500/20 text-orange-300' }, { text: '海滩', color: 'bg-yellow-500/20 text-yellow-300' }], address: '万宁', price: '免费', desc: '中国冲浪之都，全年都有适合冲浪的浪。', tips: '初学者建议报名冲浪课程。' },
+    { name: '博鳌亚洲论坛', img: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=600&q=80', rating: 4.5, level: '5A', tags: [{ text: '文化', color: 'bg-purple-500/20 text-purple-300' }, { text: '地标', color: 'bg-emerald-500/20 text-emerald-300' }], address: '琼海·博鳌', price: '¥125', desc: '博鳌亚洲论坛永久会址，国际政治经济交流平台。', tips: '论坛年会期间可能限制参观。' },
+    { name: '文昌航天城', img: 'https://images.unsplash.com/photo-1457364559154-aa2644600ebb?w=600&q=80', rating: 4.7, level: '科普基地', tags: [{ text: '航天', color: 'bg-indigo-500/20 text-indigo-300' }, { text: '科技', color: 'bg-gray-500/20 text-gray-300' }], address: '文昌·龙楼', price: '免费', desc: '中国最年轻的航天发射场，长征五号从这里启航。', tips: '如遇火箭发射，可在附近海滩观看。' },
+    { name: '骑楼老街', img: 'https://images.unsplash.com/photo-1470004914212-05527e49370b?w=600&q=80', rating: 4.5, level: '4A', tags: [{ text: '历史', color: 'bg-amber-500/20 text-amber-300' }, { text: '南洋', color: 'bg-rose-500/20 text-rose-300' }], address: '海口·龙华区', price: '免费', desc: '中国历史文化名街，700多栋南洋风格骑楼建筑。', tips: '傍晚前往更有氛围，别忘了喝老爸茶。' },
+    { name: '棋子湾', img: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=600&q=80', rating: 4.4, level: '4A', tags: [{ text: '奇石', color: 'bg-gray-500/20 text-gray-300' }, { text: '日落', color: 'bg-orange-500/20 text-orange-300' }], address: '昌江', price: '免费', desc: '海南西海岸最美海湾，黑白鹅卵石如棋子散落。', tips: '傍晚日落时分最美，注意礁石湿滑。' },
+    { name: '尖峰岭', img: 'https://images.unsplash.com/photo-1448375240586-882707db888b?w=600&q=80', rating: 4.6, level: '4A', tags: [{ text: '雨林', color: 'bg-green-500/20 text-green-300' }, { text: '天池', color: 'bg-teal-500/20 text-teal-300' }], address: '乐东', price: '¥40', desc: '中国最大热带原始雨林，天池海拔800米，云雾缭绕。', tips: '山上温度低5-8℃，建议带薄外套。' },
+    { name: '南山文化区', img: 'https://images.unsplash.com/photo-1545569341-9eb8b30979d9?w=600&q=80', rating: 4.6, level: '5A', tags: [{ text: '文化', color: 'bg-purple-500/20 text-purple-300' }, { text: '祈福', color: 'bg-red-500/20 text-red-300' }], address: '三亚·崖州', price: '¥129', desc: '108米海上观音像举世闻名，南山寺香火鼎盛。', tips: '园区很大，建议乘坐电瓶车，预留3小时。' },
+    { name: '天涯海角', img: 'https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=600&q=80', rating: 4.3, level: '4A', tags: [{ text: '地标', color: 'bg-emerald-500/20 text-emerald-300' }, { text: '免费', color: 'bg-green-500/20 text-green-300' }], address: '三亚·天涯区', price: '免费', desc: '海南标志性景点，"天涯""海角"石刻闻名遐迩。', tips: '已免门票，建议傍晚前往。' },
+    { name: '亚龙湾', img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=80', rating: 4.7, level: '5A', tags: [{ text: '海滩', color: 'bg-yellow-500/20 text-yellow-300' }, { text: '度假', color: 'bg-orange-500/20 text-orange-300' }], address: '三亚·吉阳区', price: '免费', desc: '"天下第一湾"，7.5公里半月形海湾，沙白海蓝。', tips: '公共沙滩免费，酒店沙滩需入住使用。' },
+    { name: '火山口公园', img: 'https://images.unsplash.com/photo-1462332420958-a05d1e002413?w=600&q=80', rating: 4.4, level: '4A', tags: [{ text: '地质', color: 'bg-red-500/20 text-red-300' }, { text: '科普', color: 'bg-blue-500/20 text-blue-300' }], address: '海口·秀英区', price: '¥60', desc: '万年火山口，直径约300米，深约90米。', tips: '穿运动鞋，台阶较多。山顶可俯瞰海口。' },
+];
+
+const tipsData = [
+    { icon: '🚗', title: '自驾租车', desc: '提前在神州、一嗨预订SUV。取车时检查车况并拍照。海南环岛高速免费通行。' },
+    { icon: '⛽', title: '加油补给', desc: '东线加油站密集，西线较少。昌江-乐东段山路多，提前加满油。' },
+    { icon: '☀️', title: '防晒必备', desc: 'SPF50+防晒霜必备，每2小时补涂。遮阳帽、墨镜、防晒衣标配。' },
+    { icon: '🗺️', title: '导航路线', desc: '推荐高德地图，提前下载海南离线地图。西线部分路段信号弱。' },
+    { icon: '🌧️', title: '雨季应对', desc: '4-5月偶有阵雨，随身带折叠伞。雨天山路注意减速，开启雾灯。' },
+    { icon: '💰', title: '消费提醒', desc: '五一旺季酒店价格高，西线性价比更高。环岛总预算约8000-15000元/人。' },
+    { icon: '🏥', title: '健康安全', desc: '携带常用药品。海上项目注意安全。自驾避免疲劳驾驶。' },
+    { icon: '🛒', title: '免税购物', desc: '离岛免税每人每年10万额度。海口和三亚都有免税店。' },
+    { icon: '📸', title: '拍照攻略', desc: '黄金时间：日出6-7点、日落18-19点。西线棋子湾日落是出片圣地。' },
+];
+
+const checklistData = [
+    { category: '证件财物', icon: '💳', items: ['身份证/驾驶证', '机票信息', '酒店预订', '租车订单', '银行卡/现金', '手机充电器'] },
+    { category: '防晒装备', icon: '🧴', items: ['SPF50+防晒霜', '遮阳帽', '太阳镜', '防晒衣', '晒后修复', '车用遮阳板'] },
+    { category: '衣物鞋帽', icon: '👕', items: ['夏装5-6套', '泳衣泳裤', '沙滩鞋', '运动鞋', '薄外套', '速干毛巾'] },
+    { category: '自驾必备', icon: '🚗', items: ['车载手机架', '充电线/车充', '折叠雨伞', '常用药品', '驱蚊液', '防水手机袋'] },
+];
+
+// ===== 渲染函数 =====
+
+function renderRouteMap() {
+    var container = document.getElementById('routeMapContainer');
+    if (!container) return;
+
+    var nodePositions = [
+        { x: 340, y: 520 }, { x: 410, y: 460 }, { x: 440, y: 380 }, { x: 460, y: 300 },
+        { x: 470, y: 210 }, { x: 340, y: 120 }, { x: 190, y: 200 }, { x: 140, y: 310 },
+        { x: 160, y: 420 }, { x: 340, y: 520 },
+    ];
+
+    var islandOutline = "M340,90 Q400,85 440,110 Q480,140 500,190 Q510,230 500,270 Q490,310 480,350 Q470,390 460,420 Q445,460 420,490 Q390,530 340,550 Q290,540 250,510 Q210,480 180,440 Q155,400 140,360 Q125,310 130,260 Q140,210 160,170 Q190,130 230,105 Q280,88 340,90 Z";
+
+    var routePathD = 'M' + nodePositions[0].x + ',' + nodePositions[0].y;
+    for (var i = 1; i < nodePositions.length; i++) {
+        var prev = nodePositions[i - 1];
+        var curr = nodePositions[i];
+        var cpx = (prev.x + curr.x) / 2;
+        var cpy = (prev.y + curr.y) / 2;
+        routePathD += ' Q' + (prev.x + (curr.x - prev.x) * 0.3) + ',' + (prev.y + (curr.y - prev.y) * 0.1) + ' ' + cpx + ',' + cpy;
+    }
+    var lastP = nodePositions[nodePositions.length - 2];
+    var endP = nodePositions[nodePositions.length - 1];
+    routePathD += ' Q' + (lastP.x + (endP.x - lastP.x) * 0.7) + ',' + (lastP.y + (endP.y - lastP.y) * 0.9) + ' ' + endP.x + ',' + endP.y;
+
+    var labelOffsets = [
+        { dx: 0, dy: 35, anchor: 'middle' }, { dx: 30, dy: 10, anchor: 'start' },
+        { dx: 30, dy: 5, anchor: 'start' }, { dx: 30, dy: 5, anchor: 'start' },
+        { dx: 25, dy: -5, anchor: 'start' }, { dx: 0, dy: -25, anchor: 'middle' },
+        { dx: -30, dy: -5, anchor: 'end' }, { dx: -30, dy: 5, anchor: 'end' },
+        { dx: -30, dy: 10, anchor: 'end' }, { dx: 0, dy: 35, anchor: 'middle' },
+    ];
+
+    var nodesHtml = '';
+    for (var i = 0; i < nodePositions.length; i++) {
+        var pos = nodePositions[i];
+        var stop = routeStops[i];
+        var lbl = labelOffsets[i];
+        var showLabel = i < nodePositions.length - 1;
+        nodesHtml += '<g class="route-svg-node" data-index="' + i + '" style="cursor:pointer">';
+        nodesHtml += '<circle cx="' + pos.x + '" cy="' + pos.y + '" r="18" fill="none" stroke="' + stop.color + '" stroke-width="1" opacity="0.15" class="node-outer-ring"/>';
+        nodesHtml += '<circle cx="' + pos.x + '" cy="' + pos.y + '" r="12" fill="' + stop.color + '" opacity="0.2" class="node-bg"/>';
+        nodesHtml += '<circle cx="' + pos.x + '" cy="' + pos.y + '" r="7" fill="' + stop.color + '" class="node-core" opacity="0.4"/>';
+        nodesHtml += '<circle cx="' + pos.x + '" cy="' + pos.y + '" r="3.5" fill="white" opacity="0.8" class="node-dot"/>';
+        if (showLabel) {
+            nodesHtml += '<text x="' + (pos.x + lbl.dx) + '" y="' + (pos.y + lbl.dy) + '" text-anchor="' + lbl.anchor + '" fill="white" font-size="13" font-weight="700" class="node-label" opacity="0.4">' + stop.name + '</text>';
+            nodesHtml += '<text x="' + (pos.x + lbl.dx) + '" y="' + (pos.y + lbl.dy + 15) + '" text-anchor="' + lbl.anchor + '" fill="#0ea5e9" font-size="10" font-weight="600" class="node-day-label" opacity="0.3">' + stop.day + '</text>';
+        }
+        nodesHtml += '</g>';
+    }
+
+    var infoPanelHtml = '<div class="route-info-panel" id="routeInfoPanel"><div class="route-info-inner">' +
+        '<div class="flex items-center gap-3 mb-4"><span class="text-3xl" id="infoPanelIcon">' + routeStops[0].icon + '</span><div>' +
+        '<div class="text-xs text-ocean-400 font-semibold" id="infoPanelDay">' + routeStops[0].day + '</div>' +
+        '<div class="text-xl font-black text-white" id="infoPanelName">' + routeStops[0].name + '</div></div></div>' +
+        '<p class="text-sm text-white/50 leading-relaxed" id="infoPanelDesc">' + routeStops[0].desc + '</p>' +
+        '<div class="mt-4 pt-4 border-t border-white/10"><div class="text-xs text-white/30 mb-2">环岛进度</div>' +
+        '<div class="h-1.5 bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-gradient-to-r from-ocean-400 to-ocean-500 rounded-full transition-all duration-700" id="routeProgressBar" style="width: 0%"></div></div>' +
+        '<div class="flex justify-between mt-1.5"><span class="text-xs text-white/30" id="routeProgressText">1 / ' + routeStops.length + '</span>' +
+        '<span class="text-xs text-ocean-400 font-semibold" id="routeProgressPct">0%</span></div></div></div></div>';
+
+    container.innerHTML = '<div class="route-map-layout"><div class="route-svg-wrap">' +
+        '<svg viewBox="0 0 600 640" class="route-svg" id="routeSvg"><defs>' +
+        '<filter id="islandGlow"><feGaussianBlur stdDeviation="3" result="blur"/><feFlood flood-color="#0ea5e9" flood-opacity="0.15"/><feComposite in2="blur" operator="in"/><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>' +
+        '<filter id="nodeGlow"><feGaussianBlur stdDeviation="6" result="blur"/><feFlood flood-color="#0ea5e9" flood-opacity="0.6"/><feComposite in2="blur" operator="in"/><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>' +
+        '<linearGradient id="routeGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#f43f5e"/><stop offset="25%" stop-color="#eab308"/><stop offset="50%" stop-color="#22c55e"/><stop offset="75%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#f43f5e"/></linearGradient>' +
+        '<linearGradient id="routeGradDim" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#374151"/><stop offset="100%" stop-color="#1f2937"/></linearGradient></defs>' +
+        '<path d="' + islandOutline + '" fill="rgba(14,165,233,0.03)" stroke="rgba(14,165,233,0.15)" stroke-width="1.5" filter="url(#islandGlow)"/>' +
+        '<path d="M300,150 Q320,250 280,350 Q260,420 300,500" fill="none" stroke="rgba(14,165,233,0.04)" stroke-width="1"/>' +
+        '<path d="M380,160 Q360,280 350,400 Q340,460 360,520" fill="none" stroke="rgba(14,165,233,0.04)" stroke-width="1"/>' +
+        '<path d="' + routePathD + '" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '<path id="routeAnimPath" d="' + routePathD + '" fill="none" stroke="url(#routeGrad)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="route-anim-path"/>' +
+        nodesHtml +
+        '<text x="490" y="265" fill="rgba(14,165,233,0.2)" font-size="10" text-anchor="middle">东线 ↑</text>' +
+        '<text x="155" y="265" fill="rgba(14,165,233,0.2)" font-size="10" text-anchor="middle">↓ 西线</text>' +
+        '</svg></div>' + infoPanelHtml + '</div>' +
+        '<div class="mt-8 flex justify-center gap-4">' +
+        '<button id="routePlayBtn" class="bg-ocean-500/20 hover:bg-ocean-500/30 text-ocean-300 px-6 py-2.5 rounded-full text-sm font-semibold transition-all border border-ocean-500/30 flex items-center gap-2"><i class="fas fa-play text-xs"></i> 播放路线</button>' +
+        '<button id="routeResetBtn" class="bg-white/5 hover:bg-white/10 text-white/50 px-6 py-2.5 rounded-full text-sm font-semibold transition-all border border-white/10 flex items-center gap-2"><i class="fas fa-redo text-xs"></i> 重置</button></div>';
+
+    var animPath = document.getElementById('routeAnimPath');
+    if (animPath) {
+        var totalLen = animPath.getTotalLength();
+        animPath.style.strokeDasharray = totalLen;
+        animPath.style.strokeDashoffset = totalLen;
+    }
+    activateRouteUpTo(0);
+
+    container.querySelectorAll('.route-svg-node').forEach(function(node) {
+        node.addEventListener('click', function() {
+            activateRouteUpTo(parseInt(node.dataset.index));
+        });
+    });
+
+    var playBtn = document.getElementById('routePlayBtn');
+    var resetBtn = document.getElementById('routeResetBtn');
+    var playInterval = null;
+    var currentPlayIndex = 0;
+
+    playBtn.addEventListener('click', function() {
+        if (playInterval) {
+            clearInterval(playInterval);
+            playInterval = null;
+            playBtn.innerHTML = '<i class="fas fa-play text-xs"></i> 播放路线';
+            return;
+        }
+        currentPlayIndex = 0;
+        activateRouteUpTo(0);
+        playBtn.innerHTML = '<i class="fas fa-pause text-xs"></i> 暂停';
+        playInterval = setInterval(function() {
+            currentPlayIndex++;
+            if (currentPlayIndex >= routeStops.length) {
+                clearInterval(playInterval);
+                playInterval = null;
+                playBtn.innerHTML = '<i class="fas fa-play text-xs"></i> 播放路线';
+                return;
+            }
+            activateRouteUpTo(currentPlayIndex);
+        }, 1000);
+    });
+
+    resetBtn.addEventListener('click', function() {
+        if (playInterval) {
+            clearInterval(playInterval);
+            playInterval = null;
+            playBtn.innerHTML = '<i class="fas fa-play text-xs"></i> 播放路线';
+        }
+        activateRouteUpTo(0);
+    });
+}
+
+function activateRouteUpTo(targetIndex) {
+    var nodes = document.querySelectorAll('.route-svg-node');
+    var animPath = document.getElementById('routeAnimPath');
+
+    if (animPath) {
+        var totalLen = animPath.getTotalLength();
+        var progress = targetIndex / (routeStops.length - 1);
+        var offset = totalLen * (1 - progress);
+        animPath.style.transition = 'stroke-dashoffset 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
+        animPath.style.strokeDashoffset = offset;
+    }
+
+    nodes.forEach(function(node, i) {
+        var isActive = i <= targetIndex;
+        var isCurrent = i === targetIndex;
+        var bgCircle = node.querySelector('.node-bg');
+        var coreCircle = node.querySelector('.node-core');
+        var dotCircle = node.querySelector('.node-dot');
+        var outerRing = node.querySelector('.node-outer-ring');
+        var label = node.querySelector('.node-label');
+        var dayLabel = node.querySelector('.node-day-label');
+
+        if (bgCircle) { bgCircle.setAttribute('opacity', isActive ? '0.5' : '0.2'); bgCircle.setAttribute('r', isCurrent ? '16' : '12'); }
+        if (coreCircle) { coreCircle.setAttribute('opacity', isActive ? '0.9' : '0.4'); coreCircle.setAttribute('r', isCurrent ? '9' : '7'); }
+        if (dotCircle) { dotCircle.setAttribute('opacity', isActive ? '1' : '0.8'); dotCircle.setAttribute('r', isCurrent ? '4.5' : '3.5'); }
+        if (outerRing) { outerRing.setAttribute('opacity', isCurrent ? '0.5' : '0.15'); outerRing.setAttribute('r', isCurrent ? '24' : '18'); outerRing.setAttribute('stroke-width', isCurrent ? '2' : '1'); }
+        if (label) { label.setAttribute('opacity', isActive ? '1' : '0.4'); label.setAttribute('font-size', isCurrent ? '14' : '13'); }
+        if (dayLabel) { dayLabel.setAttribute('opacity', isActive ? '0.8' : '0.3'); }
+
+        [bgCircle, coreCircle, dotCircle, outerRing, label, dayLabel].forEach(function(el) {
+            if (el) el.style.transition = 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+        });
+    });
+
+    var stop = routeStops[targetIndex];
+    var panelIcon = document.getElementById('infoPanelIcon');
+    var panelDay = document.getElementById('infoPanelDay');
+    var panelName = document.getElementById('infoPanelName');
+    var panelDesc = document.getElementById('infoPanelDesc');
+    var progressBar = document.getElementById('routeProgressBar');
+    var progressText = document.getElementById('routeProgressText');
+    var progressPct = document.getElementById('routeProgressPct');
+
+    if (panelIcon) panelIcon.textContent = stop.icon;
+    if (panelDay) panelDay.textContent = stop.day;
+    if (panelName) { panelName.textContent = stop.name; panelName.style.color = stop.color; }
+    if (panelDesc) panelDesc.textContent = stop.desc;
+    if (progressBar) {
+        var pct = Math.round((targetIndex / (routeStops.length - 1)) * 100);
+        progressBar.style.width = pct + '%';
+        progressBar.style.background = 'linear-gradient(90deg, ' + stop.color + ', ' + stop.color + 'aa)';
+    }
+    if (progressText) progressText.textContent = (targetIndex + 1) + ' / ' + routeStops.length;
+    if (progressPct) {
+        var pct2 = Math.round((targetIndex / (routeStops.length - 1)) * 100);
+        progressPct.textContent = pct2 + '%';
+        progressPct.style.color = stop.color;
+    }
+}
+
+function renderCinemaFrames() {
+    var container = document.getElementById('cinemaFramesContainer');
+    if (!container) return;
+    container.innerHTML = cinemaFrames.map(function(frame, i) {
+        return '<div class="cinema-frame" data-frame="' + frame.id + '" id="frame-' + frame.id + '">' +
+            '<div class="cinema-frame-bg"><img src="' + frame.img + '" alt="' + frame.title + '" loading="lazy"></div>' +
+            '<div class="cinema-frame-overlay ' + frame.overlay + '"></div>' +
+            '<div class="frame-number">' + String(i + 1).padStart(2, '0') + '</div>' +
+            '<div class="cinema-frame-content ' + frame.align + '">' +
+            '<div class="frame-subtitle"><span class="text-xs tracking-[0.3em] uppercase font-medium" style="color: ' + frame.accent + '">' + frame.subtitle + '</span></div>' +
+            '<div class="frame-divider" style="color: ' + frame.accent + '"></div>' +
+            '<h2 class="frame-title text-4xl sm:text-5xl md:text-6xl font-black text-white mb-4 leading-tight">' + frame.title + '</h2>' +
+            '<p class="frame-desc text-base sm:text-lg text-white/70 leading-relaxed mb-6 max-w-md">' + frame.desc + '</p>' +
+            '<div class="frame-meta flex flex-wrap items-center gap-3">' +
+            '<span class="text-xs bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-full text-white/60 border border-white/10"><i class="fas fa-route mr-1"></i>' + frame.meta + '</span>' +
+            '<span class="text-xs px-3 py-1.5 rounded-full border" style="color: ' + frame.accent + '; border-color: ' + frame.accent + '33; background: ' + frame.accent + '11">' + frame.mood + '</span>' +
+            '</div></div></div>';
+    }).join('');
+}
+
+function renderTimeline() {
+    var ticksContainer = document.getElementById('timelineTicks');
+    var labelsContainer = document.getElementById('timelineLabels');
+    if (!ticksContainer || !labelsContainer) return;
+    ticksContainer.innerHTML = itineraryData.map(function(d, i) {
+        return '<div class="timeline-tick ' + (i === 0 ? 'passed' : '') + '" data-index="' + i + '"></div>';
+    }).join('');
+    labelsContainer.innerHTML = itineraryData.map(function(d, i) {
+        return '<div class="timeline-label ' + (i === 0 ? 'active' : '') + '" data-index="' + i + '">D' + d.day + '</div>';
+    }).join('');
+    renderTimelineContent(0);
+    initTimelineInteraction();
+}
+
+function renderTimelineContent(dayIndex) {
+    var container = document.getElementById('timelineContent');
+    if (!container) return;
+    var day = itineraryData[dayIndex];
+    container.innerHTML = '<div class="timeline-card"><div class="grid grid-cols-1 lg:grid-cols-2">' +
+        '<div class="timeline-card-img relative"><img src="' + day.img + '" alt="' + day.theme + '" loading="lazy">' +
+        '<div class="absolute bottom-4 left-4 z-10"><div class="text-xs text-white/50 mb-1">' + day.weather + '</div>' +
+        '<div class="text-2xl font-black text-white">Day ' + day.day + '</div></div></div>' +
+        '<div class="p-6 lg:p-8 flex flex-col justify-center">' +
+        '<div class="flex items-center gap-3 mb-4"><span class="text-xs bg-ocean-500/20 text-ocean-300 px-3 py-1 rounded-full font-semibold">' + day.date + '</span>' +
+        '<span class="text-xs bg-white/5 text-white/40 px-3 py-1 rounded-full">' + day.mileage + '</span></div>' +
+        '<h3 class="text-2xl font-bold text-white mb-2">' + day.theme + '</h3>' +
+        '<p class="text-sm text-white/40 mb-4"><i class="fas fa-route mr-1"></i>' + day.route + '</p>' +
+        '<div class="flex flex-wrap gap-2 mb-6">' + day.highlights.map(function(h) { return '<span class="text-xs bg-white/5 text-white/60 px-3 py-1.5 rounded-full border border-white/10">' + h + '</span>'; }).join('') + '</div>' +
+        '<div class="space-y-3">' + day.items.map(function(item) {
+            return '<div class="flex items-start gap-3 p-3 rounded-xl bg-white/3 hover:bg-white/5 transition-colors">' +
+                '<span class="text-xl flex-shrink-0">' + item.icon + '</span><div class="min-w-0">' +
+                '<div class="flex items-center gap-2 mb-0.5"><span class="text-xs text-ocean-400 font-semibold">' + item.time + '</span>' +
+                '<span class="text-sm font-bold text-white">' + item.title + '</span></div>' +
+                '<p class="text-xs text-white/40 leading-relaxed">' + item.desc + '</p></div></div>';
+        }).join('') + '</div></div></div></div>';
+}
+
+function initTimelineInteraction() {
+    var track = document.getElementById('timelineTrack');
+    var progress = document.getElementById('timelineProgress');
+    var thumb = document.getElementById('timelineThumb');
+    var ticks = document.querySelectorAll('.timeline-tick');
+    var labels = document.querySelectorAll('.timeline-label');
+    if (!track || !thumb) return;
+
+    var totalDays = itineraryData.length;
+    var currentDay = 0;
+    var isDragging = false;
+
+    function updateToDay(dayIndex) {
+        dayIndex = Math.max(0, Math.min(totalDays - 1, dayIndex));
+        if (dayIndex === currentDay) return;
+        currentDay = dayIndex;
+        var pct = (dayIndex / (totalDays - 1)) * 100;
+        progress.style.width = pct + '%';
+        thumb.style.left = pct + '%';
+        ticks.forEach(function(t, i) { t.classList.toggle('passed', i <= dayIndex); });
+        labels.forEach(function(l, i) { l.classList.toggle('active', i === dayIndex); });
+        renderTimelineContent(dayIndex);
+    }
+
+    function getIndexFromX(clientX) {
+        var rect = track.getBoundingClientRect();
+        var ratio = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+        return Math.round(ratio * (totalDays - 1));
+    }
+
+    track.addEventListener('click', function(e) {
+        if (isDragging) return;
+        updateToDay(getIndexFromX(e.clientX));
+    });
+
+    thumb.addEventListener('mousedown', function(e) { isDragging = true; e.preventDefault(); });
+    thumb.addEventListener('touchstart', function(e) { isDragging = true; }, { passive: true });
+
+    var onMove = function(clientX) {
+        if (!isDragging) return;
+        var idx = getIndexFromX(clientX);
+        var pct = (idx / (totalDays - 1)) * 100;
+        progress.style.width = pct + '%';
+        thumb.style.left = pct + '%';
+        progress.style.transition = 'none';
+        thumb.style.transition = 'none';
+        ticks.forEach(function(t, i) { t.classList.toggle('passed', i <= idx); });
+        labels.forEach(function(l, i) { l.classList.toggle('active', i === idx); });
+        if (idx !== currentDay) { currentDay = idx; renderTimelineContent(idx); }
+    };
+
+    document.addEventListener('mousemove', function(e) { onMove(e.clientX); });
+    document.addEventListener('touchmove', function(e) { onMove(e.touches[0].clientX); }, { passive: true });
+
+    var onEnd = function() {
+        if (!isDragging) return;
+        isDragging = false;
+        progress.style.transition = '';
+        thumb.style.transition = '';
+    };
+    document.addEventListener('mouseup', onEnd);
+    document.addEventListener('touchend', onEnd);
+
+    labels.forEach(function(label) {
+        label.addEventListener('click', function() {
+            updateToDay(parseInt(label.dataset.index));
+        });
+    });
+}
+
+function renderWeather() {
+    var container = document.getElementById('weatherCards');
+    if (!container) return;
+    container.innerHTML = weatherData.map(function(w, i) {
+        return '<div class="weather-card fade-in" style="animation-delay: ' + (i * 0.05) + 's">' +
+            '<div class="text-xs font-semibold text-ocean-400 mb-1">' + w.date + '</div>' +
+            '<div class="text-xs text-white/30 mb-2">' + w.weekday + '</div>' +
+            '<span class="weather-icon">' + w.icon + '</span>' +
+            '<div class="text-xs text-white/50 mb-2">' + w.desc + '</div>' +
+            '<div class="temp-high">' + w.high + '℃</div>' +
+            '<div class="temp-low">' + w.low + '℃</div>' +
+            '<div class="mt-2 pt-2 border-t border-white/5 text-xs text-white/25 space-y-0.5">' +
+            '<div><i class="fas fa-tint mr-1 text-blue-400/50"></i>' + w.humidity + '</div>' +
+            '<div><i class="fas fa-wind mr-1 text-white/20"></i>' + w.wind + '</div></div></div>';
+    }).join('');
+}
+
+function renderSpots() {
+    var container = document.getElementById('spotsGrid');
+    if (!container) return;
+    container.innerHTML = spotsData.map(function(spot, i) {
+        return '<div class="spot-card fade-in" data-spot="' + i + '" style="animation-delay: ' + (i * 0.05) + 's">' +
+            '<div class="spot-img relative"><img src="' + spot.img + '" alt="' + spot.name + '" loading="lazy">' +
+            '<div class="absolute top-3 left-3 bg-black/60 backdrop-blur-sm text-xs font-bold px-2.5 py-1 rounded-full text-ocean-300">' + spot.level + '</div>' +
+            '<div class="absolute top-3 right-3 bg-black/60 backdrop-blur-sm text-white text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1"><i class="fas fa-star text-yellow-400"></i> ' + spot.rating + '</div></div>' +
+            '<div class="spot-info"><h3 class="font-bold text-white text-lg mb-1">' + spot.name + '</h3>' +
+            '<p class="text-xs text-white/30 mb-2"><i class="fas fa-map-marker-alt mr-1"></i>' + spot.address + '</p>' +
+            '<div class="flex flex-wrap mb-2">' + spot.tags.map(function(tag) { return '<span class="spot-tag ' + tag.color + '">' + tag.text + '</span>'; }).join('') + '</div>' +
+            '<div class="flex items-center justify-between"><span class="text-sm font-semibold text-orange-400">' + spot.price + '</span>' +
+            '<span class="text-xs text-ocean-400 font-semibold">详情 <i class="fas fa-arrow-right ml-1"></i></span></div></div></div>';
+    }).join('');
+
+    container.querySelectorAll('.spot-card').forEach(function(card) {
+        card.addEventListener('click', function() { showSpotModal(parseInt(card.dataset.spot)); });
+    });
+}
+
+function showSpotModal(index) {
+    var spot = spotsData[index];
+    if (!spot) return;
+    var overlay = document.createElement('div');
+    overlay.className = 'spot-modal-overlay';
+    overlay.innerHTML = '<div class="spot-modal"><div class="relative">' +
+        '<img src="' + spot.img + '" alt="' + spot.name + '" class="w-full h-56 object-cover rounded-t-xl">' +
+        '<button class="absolute top-3 right-3 bg-black/60 text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-black/80 transition-colors" id="closeModal"><i class="fas fa-times"></i></button>' +
+        '<div class="absolute bottom-3 left-3 flex gap-2"><span class="bg-black/60 backdrop-blur-sm text-xs font-bold px-2.5 py-1 rounded-full text-ocean-300">' + spot.level + '</span>' +
+        '<span class="bg-black/60 backdrop-blur-sm text-white text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1"><i class="fas fa-star text-yellow-400"></i> ' + spot.rating + '</span></div></div>' +
+        '<div class="p-6"><h3 class="text-2xl font-bold text-white mb-2">' + spot.name + '</h3>' +
+        '<p class="text-sm text-white/30 mb-3"><i class="fas fa-map-marker-alt mr-1"></i>' + spot.address + '</p>' +
+        '<div class="flex flex-wrap mb-4">' + spot.tags.map(function(tag) { return '<span class="spot-tag ' + tag.color + ' text-xs">' + tag.text + '</span>'; }).join('') + '</div>' +
+        '<div class="bg-white/5 rounded-xl p-4 mb-4"><p class="text-sm text-white/60 leading-relaxed">' + spot.desc + '</p></div>' +
+        '<div class="flex items-center justify-between mb-4"><span class="text-lg font-bold text-orange-400">' + spot.price + '</span></div>' +
+        '<div class="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4"><div class="flex items-start gap-2"><span class="text-lg">💡</span><div>' +
+        '<h5 class="font-semibold text-amber-300 text-sm mb-1">游玩贴士</h5><p class="text-xs text-amber-200/60">' + spot.tips + '</p></div></div></div></div></div>';
+
+    document.body.appendChild(overlay);
+    document.body.style.overflow = 'hidden';
+    requestAnimationFrame(function() { overlay.classList.add('show'); });
+
+    var closeModal = function() {
+        overlay.classList.remove('show');
+        document.body.style.overflow = '';
+        setTimeout(function() { overlay.remove(); }, 300);
+    };
+    overlay.querySelector('#closeModal').addEventListener('click', closeModal);
+    overlay.addEventListener('click', function(e) { if (e.target === overlay) closeModal(); });
+    document.addEventListener('keydown', function handler(e) {
+        if (e.key === 'Escape') { closeModal(); document.removeEventListener('keydown', handler); }
+    });
+}
+
+function renderTips() {
+    var container = document.getElementById('tipsGrid');
+    if (!container) return;
+    container.innerHTML = tipsData.map(function(tip, i) {
+        return '<div class="tip-card fade-in" style="animation-delay: ' + (i * 0.06) + 's">' +
+            '<div class="tip-icon"><span class="text-xl">' + tip.icon + '</span></div>' +
+            '<h4 class="font-bold text-white mb-2">' + tip.title + '</h4>' +
+            '<p class="text-sm text-white/40 leading-relaxed">' + tip.desc + '</p></div>';
+    }).join('');
+}
+
+function renderChecklist() {
+    var container = document.getElementById('checklistGrid');
+    if (!container) return;
+    container.innerHTML = checklistData.map(function(cat, ci) {
+        return '<div class="checklist-card"><div class="flex items-center gap-2 mb-3 pb-2 border-b border-white/15">' +
+            '<span class="text-xl">' + cat.icon + '</span><h4 class="font-bold text-white">' + cat.category + '</h4></div>' +
+            '<div class="space-y-1">' + cat.items.map(function(item, ii) {
+                return '<label class="checklist-item" data-cat="' + ci + '" data-item="' + ii + '"><input type="checkbox"><span>' + item + '</span></label>';
+            }).join('') + '</div></div>';
+    }).join('');
+
+    container.querySelectorAll('.checklist-item').forEach(function(label) {
+        var cb = label.querySelector('input[type="checkbox"]');
+        cb.addEventListener('change', function() { label.classList.toggle('checked', cb.checked); });
+    });
+}
+
+// ===== 交互逻辑 =====
+
+function initCinemaFrameObserver() {
+    var frames = document.querySelectorAll('.cinema-frame');
+    var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting) { entry.target.classList.add('in-view'); }
+            else { entry.target.classList.remove('in-view'); }
+        });
+    }, { threshold: 0.3, rootMargin: '0px 0px -10% 0px' });
+    frames.forEach(function(f) { observer.observe(f); });
+}
+
+function initFadeInObserver() {
+    var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); }
+        });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+    document.querySelectorAll('.fade-in').forEach(function(el) { observer.observe(el); });
+}
+
+function initBackToTop() {
+    var btn = document.getElementById('backToTop');
+    if (!btn) return;
+    window.addEventListener('scroll', function() { btn.classList.toggle('visible', window.scrollY > 500); });
+    btn.addEventListener('click', function() { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+}
+
+// ===== 初始化 =====
+document.addEventListener('DOMContentLoaded', function() {
+    renderRouteMap();
+    renderCinemaFrames();
+    renderTimeline();
+    renderWeather();
+    renderSpots();
+    renderTips();
+    renderChecklist();
+    initBackToTop();
+    setTimeout(function() {
+        initCinemaFrameObserver();
+        initFadeInObserver();
+    }, 100);
+});
+    </script>
+</body>
+</html>
